@@ -10,7 +10,8 @@ export default function JobPostingsPage() {
         </button>
       </div>
       <div className="mx-auto max-w-2xl">
-        <JobPost />
+        <JobPost title="hello" />
+        <JobPost title="world" />
       </div>
     </>
   );

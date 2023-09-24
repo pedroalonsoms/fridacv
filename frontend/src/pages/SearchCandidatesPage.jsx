@@ -19,8 +19,8 @@ export default function SearchCandidatesPage() {
       </div>
 
       <div className="mx-auto max-w-2xl">
-        <Candidate />
-        <Candidate />
+        <Candidate name="hello" />
+        <Candidate name="world" />
       </div>
     </>
   );

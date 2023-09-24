@@ -1,7 +1,7 @@
-export default function Candidate() {
+export default function Candidate(props) {
   return (
     <div className="my-4 flex w-full items-center justify-between rounded border border-black p-4">
-      <button>Candidate Name</button>
+      <button>{props.name}</button>
       <button>
         <svg
           xmlns="http://www.w3.org/2000/svg"
