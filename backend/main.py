@@ -26,6 +26,15 @@ def create_company():
     return company
 
 
+@app.route("/upload_user", methods=["POST"])
+def create_user():
+    json_data = request.json
+    name = json_data[name]
+    email = json_data[email]
+    cv_route = json_data[cv_route]
+    cursor.execute('INSERT INTO Candidate (name, email, cv_route) VALUES (?, ?, ?)', (name, email, cv_route))
+    conn.commit()
+
 
 if __name__ == "__main__":
     app.run(debug=False)
