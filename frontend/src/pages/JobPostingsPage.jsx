@@ -7,6 +7,7 @@ export default function JobPostingsPage() {
   let [isOpen, setIsOpen] = useState(true);
 
   const [formData, setFormData] = useState({
+    id_company: "",
     position_name: "",
     position_description: "",
   });
@@ -29,6 +30,7 @@ export default function JobPostingsPage() {
         },
         body: JSON.stringify(formData),
       });
+      // console.log(companyId);
       console.log(formData);
       console.log(response);
 

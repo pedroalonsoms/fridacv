@@ -2,6 +2,8 @@ import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 export default function RegisterCompanyPage() {
+  const [id_company, setId_company] = useState("");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,10 +30,18 @@ export default function RegisterCompanyPage() {
       console.log(formData);
       console.log(response);
 
-      if (response.status === 200) {
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Respuesta del servidor:", responseData);
         console.log("Registro creado con éxito");
+        const responseDataString = JSON.stringify(responseData[0][0]);
+        setId_company(responseDataString);
+        console.log(id_company);
       } else {
-        console.error("Error al enviar datos");
+        console.error(
+          "Error al enviar datos. Código de estado:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error al enviar datos:", error);
