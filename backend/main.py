@@ -4,6 +4,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 import sqlite3
+import pandas as pd
 
 from pdf_reader import get_pdf_text
 from frida import get_info_user
@@ -28,7 +29,9 @@ def create_company():
     cursor.execute('INSERT INTO Company (company_name, email, password) VALUES (?, ?, ?);', (name, email, password))
     connection.commit()
 
-    cursor.execute('SELECT * FROM Company')
+    query = "select id_company from Company where password = '" + password + "'"
+
+    cursor.execute(query)
     company = cursor.fetchall()
     connection.close()
     return company
@@ -38,6 +41,15 @@ def get_all_companies():
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Company')
+    companies = cursor.fetchall()
+    connection.close()
+    return companies
+
+@app.route("/api/jobs", methods=["get"])
+def get_all_jobs():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM CompanyPosition')
     companies = cursor.fetchall()
     connection.close()
     return companies
@@ -243,6 +255,50 @@ def get_all_red_flags():
     candidates = cursor.fetchall()
     connection.close()
     return candidates
+
+# @app.route("/api/main_candidates", methods=["GET"])
+# def match_softskills_hardskills():
+#     """
+#     RH envia las softskills y hardskills deseadas y esta funcion devuelve a los candidatos que hacen match con las
+#     solicitudes de RH. las propiedades "softskills" y "hardskills" del json deben ser un arreglo de informacion
+#     para obtener una lista de Python e iterar. Una de las propiedades puede ser una lista vacia pero no las 2
+#     """
+
+#     connection = sqlite3.connect('FridaCV.db')
+#     cursor = connection.cursor()
+    
+#     json_data = request.json
+#     rh_softskills = json_data["softskills"]
+#     rh_hardskills = json_data["hardskills"]
+
+#     cursor.execute('SELECT * FROM Softskills')
+#     all_candidates_softskills = cursor.fetchall()
+#     cursor.execute('SELECT * FROM Hardskills')
+#     all_candidates_hardskills = cursor.fetchall()
+
+#     ranked_candidates = {}
+
+#     for register in all_candidates_softskills:
+#         if register[1] in rh_softskills: # el registro tiene una softskill deseada
+#             if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
+#                 ranked_candidates[register[0]] += 1
+#             else: # si no existe se crea su registro en el diccionario
+#                 ranked_candidates[register[0]] = 1
+
+#     for register in all_candidates_hardskills:
+#         if register[1] in rh_hardskills: # el registro tiene una hardskill deseada
+#             if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
+#                 ranked_candidates[register[0]] += 1
+#             else: # si no existe se crea su registro en el diccionario
+#                 ranked_candidates[register[0]] = 1
+
+#     df = pd.DataFrame(list(ranked_candidates.items()), columns=["Candidate", "Ranking"]) # crear un DataFrame a partir del diccionario
+#     df.sort_values(by="Ranking", ascending=False, inplace=True)
+#     df.reset_index(drop=True, inplace=True)
+#     json_results = df.to_json(orient="split", index=False)
+#     return json_results
+
+
 
 if __name__ == "__main__":
     app.run(debug=False, port=4000)
