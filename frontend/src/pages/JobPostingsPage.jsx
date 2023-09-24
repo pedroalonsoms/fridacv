@@ -169,6 +169,7 @@ export default function JobPostingsPage() {
         {jobPostings.map((jobPosting, idx) => (
           <JobPost
             key={idx}
+            href={`/job-postings/${jobPosting.id_company_position}/search`}
             title={jobPosting.position_name}
             onDeleteClick={() => {
               handleDeleteJobPosting(jobPosting.id_company_position);
