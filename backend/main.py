@@ -66,7 +66,9 @@ def create_job():
     cursor.execute('INSERT INTO CompanyPosition (id_company, position_name, position_description) VALUES (?, ?, ?);', (id_company, position_name, position_description))
     connection.commit()
 
-    cursor.execute('SELECT * FROM CompanyPosition')
+    query = "select * from CompanyPosition where position_name = '" + position_name + "'"
+
+    cursor.execute(query)
     company_positions = cursor.fetchall()
     connection.close()
     return company_positions
@@ -120,7 +122,7 @@ def create_user():
     email = parsed_file[0][3]
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
-    cursor.execute('INSERT INTO Candidate (name, email, cv_route, ranking_points) VALUES (?, ?, ?, ?)', (name, email, complete_path, 0))
+    cursor.execute('INSERT INTO Candidate (name, email, cv_route, ranking_points, filtered_points) VALUES (?, ?, ?, ?, ?)', (name, email, complete_path, 0, 0))
     connection.commit()
     query = "select id_candidate from Candidate where cv_route = '" + complete_path + "'"
     cursor.execute(query)
@@ -256,47 +258,49 @@ def get_all_red_flags():
     connection.close()
     return candidates
 
-# @app.route("/api/main_candidates", methods=["GET"])
-# def match_softskills_hardskills():
-#     """
-#     RH envia las softskills y hardskills deseadas y esta funcion devuelve a los candidatos que hacen match con las
-#     solicitudes de RH. las propiedades "softskills" y "hardskills" del json deben ser un arreglo de informacion
-#     para obtener una lista de Python e iterar. Una de las propiedades puede ser una lista vacia pero no las 2
-#     """
+@app.route("/api/main_candidates", methods=["GET"])
+def match_softskills_hardskills():
+    """
+    RH envia las softskills y hardskills deseadas y esta funcion devuelve a los candidatos que hacen match con las
+    solicitudes de RH. las propiedades "softskills" y "hardskills" del json deben ser un arreglo de informacion
+    para obtener una lista de Python e iterar. Una de las propiedades puede ser una lista vacia pero no las 2
+    """
 
-#     connection = sqlite3.connect('FridaCV.db')
-#     cursor = connection.cursor()
     
-#     json_data = request.json
-#     rh_softskills = json_data["softskills"]
-#     rh_hardskills = json_data["hardskills"]
 
-#     cursor.execute('SELECT * FROM Softskills')
-#     all_candidates_softskills = cursor.fetchall()
-#     cursor.execute('SELECT * FROM Hardskills')
-#     all_candidates_hardskills = cursor.fetchall()
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    
+    json_data = request.json
+    rh_softskills = json_data["softskills"]
+    rh_hardskills = json_data["hardskills"]
 
-#     ranked_candidates = {}
+    cursor.execute('SELECT * FROM Softskills')
+    all_candidates_softskills = cursor.fetchall()
+    cursor.execute('SELECT * FROM Hardskills')
+    all_candidates_hardskills = cursor.fetchall()
 
-#     for register in all_candidates_softskills:
-#         if register[1] in rh_softskills: # el registro tiene una softskill deseada
-#             if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
-#                 ranked_candidates[register[0]] += 1
-#             else: # si no existe se crea su registro en el diccionario
-#                 ranked_candidates[register[0]] = 1
+    ranked_candidates = {}
 
-#     for register in all_candidates_hardskills:
-#         if register[1] in rh_hardskills: # el registro tiene una hardskill deseada
-#             if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
-#                 ranked_candidates[register[0]] += 1
-#             else: # si no existe se crea su registro en el diccionario
-#                 ranked_candidates[register[0]] = 1
+    for register in all_candidates_softskills:
+        if register[1] in rh_softskills: # el registro tiene una softskill deseada
+            if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
+                ranked_candidates[register[0]] += 1
+            else: # si no existe se crea su registro en el diccionario
+                ranked_candidates[register[0]] = 1
 
-#     df = pd.DataFrame(list(ranked_candidates.items()), columns=["Candidate", "Ranking"]) # crear un DataFrame a partir del diccionario
-#     df.sort_values(by="Ranking", ascending=False, inplace=True)
-#     df.reset_index(drop=True, inplace=True)
-#     json_results = df.to_json(orient="split", index=False)
-#     return json_results
+    for register in all_candidates_hardskills:
+        if register[1] in rh_hardskills: # el registro tiene una hardskill deseada
+            if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
+                ranked_candidates[register[0]] += 1
+            else: # si no existe se crea su registro en el diccionario
+                ranked_candidates[register[0]] = 1
+
+    df = pd.DataFrame(list(ranked_candidates.items()), columns=["Candidate", "Ranking"]) # crear un DataFrame a partir del diccionario
+    df.sort_values(by="Ranking", ascending=False, inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    json_results = df.to_json(orient="split", index=False)
+    return json_results
 
 
 

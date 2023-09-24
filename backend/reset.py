@@ -14,7 +14,7 @@ cursor.execute('DROP TABLE URL')
 cursor.execute('DROP TABLE Candidate')
 
 # Tablas del procesamiento de CVs por la IA
-cursor.execute('CREATE TABLE IF NOT EXISTS Candidate (id_candidate INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), email VARCHAR(50), cv_route VARCHAR(50), ranking_points INTEGER)')
+cursor.execute('CREATE TABLE IF NOT EXISTS Candidate (id_candidate INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), email VARCHAR(50), cv_route VARCHAR(50), ranking_points INTEGER, filtered_points INTEGER)')
 cursor.execute('CREATE TABLE IF NOT EXISTS URL (id_candidate INTEGER, url VARCHAR(100), source VARCHAR(50), FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
 cursor.execute('CREATE TABLE IF NOT EXISTS Hardskills (id_candidate INTEGER, hardskill VARCHAR(50), word_repetition INTEGER, FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
 cursor.execute('CREATE TABLE IF NOT EXISTS Softskills (id_candidate INTEGER, softskill VARCHAR(50), FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
