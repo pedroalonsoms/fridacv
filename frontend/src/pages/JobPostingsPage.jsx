@@ -29,6 +29,7 @@ export default function JobPostingsPage() {
         },
         body: JSON.stringify(formData),
       });
+      console.log(formData);
 
       if (response.status === 201) {
         console.log("Registro creado con éxito");
