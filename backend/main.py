@@ -1,8 +1,6 @@
 from flask import Flask
 from flask import request
 import sqlite3
-conn = sqlite3.connect('FridaCV.db')
-cursor = conn.cursor() # con el cursor se hacen consultas
 
 app = Flask(__name__)
 
@@ -16,11 +14,17 @@ def create_company():
     name = json_data["name"]
     email = json_data["email"]
     password = json_data["password"]
+    
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
     cursor.execute('INSERT INTO Company (company_name, email, password) VALUES (?, ?, ?)', (name, email, password))
-    conn.commit()
+    connection.commit()
+
     cursor.execute('SELECT * FROM Company')
     company = cursor.fetchall()
-    print(company)
+    connection.close()
+    return company
+
 
 @app.route("/upload_user", methods=["POST"])
 def create_user():
