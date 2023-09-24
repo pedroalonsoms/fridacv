@@ -18,7 +18,7 @@ export default function RegisterCompanyPage() {
 
     // Enviar los datos al servidor
     try {
-      const response = await fetch("/api/companies", {
+      const response = await fetch("http://localhost:4000/api/companies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,8 +26,9 @@ export default function RegisterCompanyPage() {
         body: JSON.stringify(formData),
       });
       console.log(formData);
+      console.log(response);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log("Registro creado con éxito");
       } else {
         console.error("Error al enviar datos");
