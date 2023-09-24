@@ -2,12 +2,14 @@ import os
 import uuid
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 import sqlite3
 
 from pdf_reader import get_pdf_text
 from frida import get_info_user
 
 app = Flask(__name__)
+CORS(app)  # Habilita CORS en tu aplicación
 
 @app.route("/")
 def hello_world():
@@ -30,6 +32,15 @@ def create_company():
     company = cursor.fetchall()
     connection.close()
     return company
+
+@app.route("/companies/", methods=["get"])
+def get_all_companies():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Company')
+    companies = cursor.fetchall()
+    connection.close()
+    return companies
 
 @app.route("/api/jobs", methods=["POST"])
 def create_job():
