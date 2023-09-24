@@ -7,8 +7,8 @@ export default function JobPostingsPage() {
   let [isOpen, setIsOpen] = useState(true);
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    position_name: "",
+    position_description: "",
   });
 
   const handleChange = (event) => {
@@ -22,7 +22,7 @@ export default function JobPostingsPage() {
 
     // Enviar los datos al servidor
     try {
-      const response = await fetch("/api/crearRegistro", {
+      const response = await fetch("http://localhost:4000/api/jobs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,14 +30,15 @@ export default function JobPostingsPage() {
         body: JSON.stringify(formData),
       });
       console.log(formData);
+      console.log(response);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log("Registro creado con éxito");
         setIsOpen(false); // Cerrar el diálogo después del envío exitoso
       } else {
         console.error("Error al enviar datos");
       }
-      setIsOpen(false);
+      // setIsOpen(false);
     } catch (error) {
       console.error("Error al enviar datos:", error);
     }
@@ -59,28 +60,28 @@ export default function JobPostingsPage() {
 
             <form onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="title" className="block pt-3">
+                <label htmlFor="position_name" className="block pt-3">
                   Title
                 </label>
                 <input
                   type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
+                  id="position_name"
+                  name="position_name"
+                  value={formData.position_name}
                   onChange={handleChange}
                   className="w-full rounded-md border border-slate-400 p-2"
                 ></input>
               </div>
 
               <div>
-                <label htmlFor="description" className="block pt-2">
+                <label htmlFor="position_description" className="block pt-2">
                   Description
                 </label>
                 <input
                   type="text"
-                  id="description"
-                  name="description"
-                  value={formData.description}
+                  id="position_description"
+                  name="position_description"
+                  value={formData.position_description}
                   onChange={handleChange}
                   className="w-full rounded-md border border-slate-400 p-2"
                 ></input>
