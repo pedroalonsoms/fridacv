@@ -4,7 +4,7 @@ from pypdf import PdfReader
 import PyPDF2
 
 def get_pdf_text(path):
-    pdf_file = open('./uploads/c1c07d58-406a-4832-9fbd-3a31e79aa9ac.pdf', 'rb')
+    pdf_file = open(path, 'rb')
     pdf_reader = PyPDF2.PdfReader(pdf_file)
 
     text = ""

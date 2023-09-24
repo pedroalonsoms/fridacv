@@ -80,12 +80,16 @@ def create_user():
     resume_file = request.files["resume_file"]
     hashed_filename = str(uuid.uuid4()) + ".pdf"
     resume_file.save(os.path.join("./uploads", hashed_filename))
-    print(hashed_filename)
-    print(resume_file.filename)
     complete_path = "./uploads/" + hashed_filename
     file_string = get_pdf_text(complete_path)
-    # print(file_string)
-    get_info_user(file_string)
+    parsed_file = get_info_user(file_string) # [personal_info_arr, soft_skills_arr, technical_skills_arr, number_time_periods_arr]
+    name = parsed_file[0][0]
+    email = parsed_file[0][3]
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO Candidate (name, email, cv_route) VALUES (?, ?, ?)', (name, email, complete_path))
+    connection.commit()
+    connection.close()
     
     return ""
 
