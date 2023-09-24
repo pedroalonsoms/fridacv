@@ -1,15 +1,16 @@
 import Navbar from "../components/Navbar";
 import JobPost from "../components/JobPost";
 import { Dialog } from "@headlessui/react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCompany } from "../components/CompanyContext";
 
 export default function JobPostingsPage() {
-  let [isOpen, setIsOpen] = useState(true);
-  const { companyId } = useCompany();
+  const { idCompany } = useCompany();
+  let [isOpen, setIsOpen] = useState(false);
+  let [jobPostings, setJobPostings] = useState([]);
 
   const [formData, setFormData] = useState({
-    id_company: companyId,
+    id_company: idCompany,
     position_name: "",
     position_description: "",
   });
@@ -19,26 +20,49 @@ export default function JobPostingsPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log("handlesubmit");
-
-    // Enviar los datos al servidor
-    try {
-      const response = await fetch("http://localhost:4000/api/jobs", {
-        method: "POST",
+  const handleDeleteJobPosting = async (id_company_position) => {
+    const response = await fetch(
+      `http://localhost:4000/api/jobs/${id_company_position}`,
+      {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
-      });
+      },
+    );
+
+    if (response.status === 200) {
+      console.log("Registro borrado con éxito");
+      handleGetJobPostings();
+    } else {
+      console.error("Error al enviar datos");
+    }
+  };
+
+  const handleCreateNewPosting = async (event) => {
+    event.preventDefault();
+    console.log("handleCreateNewPosting");
+    console.log({ idCompany });
+
+    // Enviar los datos al servidor
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/jobs/companies/${idCompany}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        },
+      );
       console.log(formData);
       console.log(response);
 
-      console.log(companyId);
       if (response.status === 200) {
         console.log("Registro creado con éxito");
         setIsOpen(false); // Cerrar el diálogo después del envío exitoso
+        handleGetJobPostings();
       } else {
         console.error("Error al enviar datos");
       }
@@ -47,6 +71,26 @@ export default function JobPostingsPage() {
       console.error("Error al enviar datos:", error);
     }
   };
+
+  const handleGetJobPostings = useCallback(async () => {
+    console.log("handleGetJobPostings");
+    const response = await fetch(
+      `http://localhost:4000/api/jobs/companies/${idCompany}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    const data = await response.json();
+    console.log(data);
+    setJobPostings(data);
+  }, [idCompany]);
+
+  useEffect(() => {
+    handleGetJobPostings();
+  }, [handleGetJobPostings]);
 
   return (
     <>
@@ -62,7 +106,7 @@ export default function JobPostingsPage() {
               New Job Posting
             </Dialog.Title>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleCreateNewPosting}>
               <div>
                 <label htmlFor="position_name" className="block pt-3">
                   Title
@@ -122,8 +166,15 @@ export default function JobPostingsPage() {
         </button>
       </div>
       <div className="mx-auto max-w-2xl">
-        <JobPost title="hello" />
-        <JobPost title="world" />
+        {jobPostings.map((jobPosting, idx) => (
+          <JobPost
+            key={idx}
+            title={jobPosting.position_name}
+            onDeleteClick={() => {
+              handleDeleteJobPosting(jobPosting.id_company_position);
+            }}
+          />
+        ))}
       </div>
     </>
   );
