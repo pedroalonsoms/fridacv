@@ -144,6 +144,57 @@ def create_user():
     
     return ""
 
+@app.route("/user_info/<id>", methods=["get"])
+def get_user_info(id):
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    user_info = {
+        "personal_info": {
+            "name": "no name",
+            "email": "no email",
+            "urls": [],
+        },
+        "soft_skills": [],
+        "technical_skills": [],
+        "red_flags": [],
+    }
+    query = "SELECT softskill FROM Softskills WHERE id_candidate = " + str(id)
+    cursor.execute(query)
+    softskills = cursor.fetchall()
+    print (softskills[0])
+    for softskill in softskills:
+        user_info["soft_skills"].append(softskill[0])
+
+    query = "SELECT hardskill FROM Hardskills WHERE id_candidate = " + str(id)
+    cursor.execute(query)
+    hardskills = cursor.fetchall()
+    print (hardskills[0])
+    for hardskill in hardskills:
+        user_info["technical_skills"].append(hardskill[0])
+
+    query = "SELECT url FROM URL WHERE id_candidate = " + str(id)
+    cursor.execute(query)
+    urls = cursor.fetchall()
+    print (urls[0])
+    for url in urls:
+        user_info["personal_info"]["urls"].append(url[0])
+
+    query = "SELECT description FROM Redflags WHERE id_candidate = " + str(id)
+    cursor.execute(query)
+    flags = cursor.fetchall()
+    print (flags[0])
+    for flag in flags:
+        user_info["red_flags"].append(flag[0])
+
+    query = "SELECT * FROM Candidate WHERE id_candidate = " + str(id)
+    cursor.execute(query)
+    info = cursor.fetchall()
+    print(info[0])
+    user_info["personal_info"]["name"] = info[0][1]
+    user_info["personal_info"]["email"] = info[0][2]
+
+    connection.close()
+    return user_info
 
 @app.route("/urls/", methods=["get"])
 def get_all_urls():
