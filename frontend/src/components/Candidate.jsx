@@ -2,7 +2,7 @@ import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 
 export default function Candidate(props) {
-  let [isOpen, setIsOpen] = useState(true);
+  let [isOpen, setIsOpen] = useState(false);
 
   return (
     <>

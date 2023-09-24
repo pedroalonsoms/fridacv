@@ -1,24 +1,46 @@
 import Navbar from "../components/Navbar";
 import Candidate from "../components/Candidate";
+import Select from "react-select";
+import { useState } from "react";
 
 export default function SearchCandidatesPage() {
+  const [keywords, setKeywords] = useState([]);
+  const options = [
+    { value: "felipe", label: "Felipe" },
+    { value: "julio", label: "Julio" },
+    { value: "pedro", label: "Pedro" },
+  ];
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log(keywords);
+  };
+
   return (
     <>
       <Navbar />
-      <h2 className="py-20 text-center text-6xl font-bold">
+      <h1 className="py-20 text-center text-6xl font-bold">
         Search Candidates
-      </h2>
+      </h1>
 
-      <div className="flex items-center justify-center">
-        <input
-          type="text"
-          placeholder="Search candidates..."
-          className="w-96 rounded-l-md border border-gray-300 px-4 py-2 focus:outline-none"
+      <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl gap-2">
+        <Select
+          name="colors"
+          isMulti
+          className="grow"
+          value={keywords}
+          options={options}
+          onChange={(newKeywords) => {
+            setKeywords(() => newKeywords);
+          }}
         />
-        <button className="rounded-r-md border bg-white px-4 py-2 text-black hover:bg-black hover:text-white focus:outline-none">
-          Search
+
+        <button
+          type="submit"
+          className="rounded-md bg-black px-4 py-2 text-white"
+        >
+          Continue
         </button>
-      </div>
+      </form>
 
       <div className="mx-auto max-w-2xl">
         <Candidate name="hello" />
