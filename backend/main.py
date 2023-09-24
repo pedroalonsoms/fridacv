@@ -99,9 +99,84 @@ def create_user():
     cursor = connection.cursor()
     cursor.execute('INSERT INTO Candidate (name, email, cv_route) VALUES (?, ?, ?)', (name, email, complete_path))
     connection.commit()
+    query = "select id_candidate from Candidate where cv_route = '" + complete_path + "'"
+    cursor.execute(query)
+    user_id = cursor.fetchall()[0][0]
+
+    for i in range(4,len(parsed_file[0])):
+        print(parsed_file[0][i])
+        cursor.execute('INSERT INTO URL (id_candidate, url) VALUES (?, ?)', (user_id, parsed_file[0][i]))
+        connection.commit()
+
+    for i in range(len(parsed_file[1])):
+        print(parsed_file[1][i])
+        cursor.execute('INSERT INTO Softskills (id_candidate, softskill) VALUES (?, ?)', (user_id, parsed_file[1][i]))
+        connection.commit()
+
+    for i in range(len(parsed_file[2])):
+        print(parsed_file[2][i])
+        cursor.execute('INSERT INTO Hardskills (id_candidate, hardskill) VALUES (?, ?)', (user_id, parsed_file[2][i]))
+        connection.commit()
+
+    longevity = False
+    for i in range(len(parsed_file[3])):
+        if parsed_file[3][i] >= 23:
+            longevity = True
+
+    if longevity:
+        desc = "The user tends to stay more than 2 years"
+        cursor.execute('INSERT INTO Redflags (id_candidate, description) VALUES (?, ?)', (user_id, desc))
+        connection.commit()
+    else:
+        desc = "The user tends to stay less than 2 years"
+        cursor.execute('INSERT INTO Redflags (id_candidate, description) VALUES (?, ?)', (user_id, desc))
+        connection.commit()
+
     connection.close()
     
     return ""
+
+
+@app.route("/urls/", methods=["get"])
+def get_all_urls():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM URL')
+    candidates = cursor.fetchall()
+    connection.close()
+    return candidates
+
+
+@app.route("/soft_skills/", methods=["get"])
+def get_all_soft_skills():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Softskills')
+    candidates = cursor.fetchall()
+    connection.close()
+    return candidates
+
+@app.route("/hard_skills/", methods=["get"])
+def get_all_hard_skills():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Hardskills')
+    candidates = cursor.fetchall()
+    connection.close()
+    return candidates
+
+@app.route("/red_flags/", methods=["get"])
+def get_all_red_flags():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Redflags')
+    candidates = cursor.fetchall()
+    connection.close()
+    return candidates
+
+# cursor.execute('CREATE TABLE IF NOT EXISTS Hardskills (id_candidate INTEGER, hardskill VARCHAR(50), word_repetition INTEGER, FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
+
+# cursor.execute('CREATE TABLE IF NOT EXISTS Redflags (id_candidate INTEGER, description VARCHAR(250), FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
 
 # @app.route("/upload_user", methods=["POST"])
 # def create_user():
