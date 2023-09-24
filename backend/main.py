@@ -17,94 +17,14 @@ def hello_world():
     get_info_user()
     return "<p>Hello, World!</p>"
 
-@app.route("/api/companies", methods=["POST"])
-def create_company():
-    json_data = request.json
-    name = json_data["name"]
-    email = json_data["email"]
-    password = json_data["password"]
-    
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('INSERT INTO Company (company_name, email, password) VALUES (?, ?, ?);', (name, email, password))
-    connection.commit()
-
-    query = "select id_company from Company where password = '" + password + "'"
-
-    cursor.execute(query)
-    company = cursor.fetchall()
-    connection.close()
-    return company
-
-@app.route("/companies/", methods=["get"])
-def get_all_companies():
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM Company')
-    companies = cursor.fetchall()
-    connection.close()
-    return companies
-
-@app.route("/api/jobs", methods=["get"])
-def get_all_jobs():
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM CompanyPosition')
-    companies = cursor.fetchall()
-    connection.close()
-    return companies
-
-@app.route("/api/jobs", methods=["POST"])
-def create_job():
-    json_data = request.json
-    id_company = json_data["id_company"]
-    position_name = json_data["position_name"]
-    position_description = json_data["position_description"]
-
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('INSERT INTO CompanyPosition (id_company, position_name, position_description) VALUES (?, ?, ?);', (id_company, position_name, position_description))
-    connection.commit()
-
-    query = "select * from CompanyPosition where position_name = '" + position_name + "'"
-
-    cursor.execute(query)
-    company_positions = cursor.fetchall()
-    connection.close()
-    return company_positions
-
-@app.route("/api/jobs", methods=["PUT"])
-def update_job():
-    json_data = request.json
-    # id_company, position_name, position_description
-    id_company = json_data["id_company"]
-    position_name = json_data["position_name"]
-    position_description = json_data["position_description"]
-
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('UPDATE CompanyPosition SET position_name=?, position_description=? WHERE id_company=?;', (position_name, position_description, id_company))
-    connection.commit()
-
-    cursor.execute('SELECT * FROM CompanyPosition WHERE id_company=?', (id_company))
-    updated_position = cursor.fetchall()
-    connection.close()
-    return updated_position
-
-@app.route("/api/jobs", methods=["DELETE"])
-def delete_job():
-    json_data = request.json
-    id_company = json_data["id_company"]
-
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    cursor.execute('DELETE FROM CompanyPosition WHERE id_company=?;', (id_company))
-    connection.commit()
-
+# USERS
 @app.route("/users/", methods=["get"])
 def get_all_user():
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
+    query = "UPDATE Candidate SET filtered_points = " + str(0)
+    cursor.execute(query)
+    connection.commit()
     cursor.execute('SELECT * FROM Candidate ORDER BY ranking_points DESC')
     candidates = cursor.fetchall()
     connection.close()
@@ -221,6 +141,141 @@ def get_user_info(id):
     connection.close()
     return user_info
 
+
+
+@app.route("/api/main_candidates", methods=["GET"])
+def match_softskills_hardskills():
+    """
+    RH envia las softskills y hardskills deseadas y esta funcion devuelve a los candidatos que hacen match con las
+    solicitudes de RH. las propiedades "softskills" y "hardskills" del json deben ser un arreglo de informacion
+    para obtener una lista de Python e iterar. Una de las propiedades puede ser una lista vacia pero no las 2
+    """
+
+    json_data = request.json
+    rh_softskills = json_data["softskills"]
+    rh_hardskills = json_data["hardskills"]
+
+    connection = sqlite3.connect('FridaCV.db')
+
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Candidate')
+    candidates = cursor.fetchall()
+    for candidate in candidates:
+        new_ranking_points = 0
+        id_candidate = candidate[0]
+        query = "SELECT softskill FROM Softskills WHERE id_candidate = " + str(id_candidate)
+        cursor.execute(query)
+        softskills = cursor.fetchall()
+        for softskill in softskills:
+            if softskill[0] in rh_softskills:
+                new_ranking_points += 1
+        query = "SELECT hardskill FROM Hardskills WHERE id_candidate = " + str(id_candidate)
+        cursor.execute(query)
+        hardskills = cursor.fetchall()
+        for hardskill in hardskills:
+            if hardskill[0] in rh_hardskills:
+                new_ranking_points += 1
+        
+        query = "UPDATE Candidate SET filtered_points = " + str(new_ranking_points) + " WHERE id_candidate = " + str(id_candidate)
+        cursor.execute(query)
+        connection.commit()
+        
+    cursor.execute('SELECT * FROM Candidate ORDER BY filtered_points DESC')
+    return_data = cursor.fetchall()
+
+    connection.close()
+
+    return return_data
+
+# COMPANIES
+@app.route("/api/companies", methods=["POST"])
+def create_company():
+    json_data = request.json
+    name = json_data["name"]
+    email = json_data["email"]
+    password = json_data["password"]
+    
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO Company (company_name, email, password) VALUES (?, ?, ?);', (name, email, password))
+    connection.commit()
+
+    query = "select id_company from Company where password = '" + password + "'"
+
+    cursor.execute(query)
+    company = cursor.fetchall()
+    connection.close()
+    return company
+
+@app.route("/companies/", methods=["get"])
+def get_all_companies():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Company')
+    companies = cursor.fetchall()
+    connection.close()
+    return companies
+
+# JOBS
+
+@app.route("/api/jobs", methods=["get"])
+def get_all_jobs():
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM CompanyPosition')
+    companies = cursor.fetchall()
+    connection.close()
+    return companies
+
+@app.route("/api/jobs", methods=["POST"])
+def create_job():
+    json_data = request.json
+    id_company = json_data["id_company"]
+    position_name = json_data["position_name"]
+    position_description = json_data["position_description"]
+
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO CompanyPosition (id_company, position_name, position_description) VALUES (?, ?, ?);', (id_company, position_name, position_description))
+    connection.commit()
+
+    query = "select * from CompanyPosition where position_name = '" + position_name + "'"
+
+    cursor.execute(query)
+    company_positions = cursor.fetchall()
+    connection.close()
+    return company_positions
+
+@app.route("/api/jobs", methods=["PUT"])
+def update_job():
+    json_data = request.json
+    # id_company, position_name, position_description
+    id_company = json_data["id_company"]
+    position_name = json_data["position_name"]
+    position_description = json_data["position_description"]
+
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('UPDATE CompanyPosition SET position_name=?, position_description=? WHERE id_company=?;', (position_name, position_description, id_company))
+    connection.commit()
+
+    cursor.execute('SELECT * FROM CompanyPosition WHERE id_company=?', (id_company))
+    updated_position = cursor.fetchall()
+    connection.close()
+    return updated_position
+
+@app.route("/api/jobs", methods=["DELETE"])
+def delete_job():
+    json_data = request.json
+    id_company = json_data["id_company"]
+
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM CompanyPosition WHERE id_company=?;', (id_company))
+    connection.commit()
+
+
+# URLS
 @app.route("/urls/", methods=["get"])
 def get_all_urls():
     connection = sqlite3.connect('FridaCV.db')
@@ -230,7 +285,7 @@ def get_all_urls():
     connection.close()
     return candidates
 
-
+# USER DESCRIPTIONS
 @app.route("/soft_skills/", methods=["get"])
 def get_all_soft_skills():
     connection = sqlite3.connect('FridaCV.db')
@@ -257,52 +312,6 @@ def get_all_red_flags():
     candidates = cursor.fetchall()
     connection.close()
     return candidates
-
-@app.route("/api/main_candidates", methods=["GET"])
-def match_softskills_hardskills():
-    """
-    RH envia las softskills y hardskills deseadas y esta funcion devuelve a los candidatos que hacen match con las
-    solicitudes de RH. las propiedades "softskills" y "hardskills" del json deben ser un arreglo de informacion
-    para obtener una lista de Python e iterar. Una de las propiedades puede ser una lista vacia pero no las 2
-    """
-
-    
-
-    connection = sqlite3.connect('FridaCV.db')
-    cursor = connection.cursor()
-    
-    json_data = request.json
-    rh_softskills = json_data["softskills"]
-    rh_hardskills = json_data["hardskills"]
-
-    cursor.execute('SELECT * FROM Softskills')
-    all_candidates_softskills = cursor.fetchall()
-    cursor.execute('SELECT * FROM Hardskills')
-    all_candidates_hardskills = cursor.fetchall()
-
-    ranked_candidates = {}
-
-    for register in all_candidates_softskills:
-        if register[1] in rh_softskills: # el registro tiene una softskill deseada
-            if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
-                ranked_candidates[register[0]] += 1
-            else: # si no existe se crea su registro en el diccionario
-                ranked_candidates[register[0]] = 1
-
-    for register in all_candidates_hardskills:
-        if register[1] in rh_hardskills: # el registro tiene una hardskill deseada
-            if register[0] in ranked_candidates: # si ya existe el candidato se incrementa su puntaje
-                ranked_candidates[register[0]] += 1
-            else: # si no existe se crea su registro en el diccionario
-                ranked_candidates[register[0]] = 1
-
-    df = pd.DataFrame(list(ranked_candidates.items()), columns=["Candidate", "Ranking"]) # crear un DataFrame a partir del diccionario
-    df.sort_values(by="Ranking", ascending=False, inplace=True)
-    df.reset_index(drop=True, inplace=True)
-    json_results = df.to_json(orient="split", index=False)
-    return json_results
-
-
 
 if __name__ == "__main__":
     app.run(debug=False, port=4000)
