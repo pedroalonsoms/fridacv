@@ -9,9 +9,16 @@ export default function RegisterCompanyPage() {
       >
         <p className="text-slate-400">Welcome</p>
 
-        <div>
-          <label htmlFor="companyName">First name</label>
-          <input type="text" id="companyName" name="companyName"></input>
+        <div className="pt-2">
+          <label className="block pt-2" htmlFor="companyName">
+            Company Name
+          </label>
+          <input
+            className="rounded-md border border-slate-400 p-2"
+            type="text"
+            id="companyName"
+            name="companyName"
+          ></input>
         </div>
 
         <div>
