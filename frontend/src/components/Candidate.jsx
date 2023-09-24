@@ -1,8 +1,28 @@
 import { Dialog } from "@headlessui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Candidate(props) {
+  const [userInfo, setUserInfo] = useState({
+    personal_info: {
+      name: "no name",
+      email: "no email",
+      urls: [],
+    },
+    soft_skills: [],
+    technical_skills: [],
+    red_flags: [],
+  });
+
   let [isOpen, setIsOpen] = useState(false);
+
+  const fetchUserInfo = () => {
+    setIsOpen(true);
+    const id = 1; // Replace with the desired user ID
+    fetch(`/user_info/${id}`)
+      .then((response) => response.json())
+      .then((data) => setUserInfo(data))
+      .catch((error) => console.error("Error fetching user info:", error));
+  };
 
   return (
     <>
@@ -23,12 +43,14 @@ export default function Candidate(props) {
                 Green flags
               </label>
               <div className="flex gap-1">
-                <div className="mt-1 rounded-md bg-green-100 px-2 py-1 text-xs">
-                  Gran empleado
-                </div>
-                <div className="mt-1 rounded-md bg-green-100 px-2 py-1 text-xs">
-                  Gran empleado
-                </div>
+                {userInfo.soft_skills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="mt-1 rounded-md bg-green-100 px-2 py-1 text-xs"
+                  >
+                    {skill}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -37,22 +59,15 @@ export default function Candidate(props) {
                 Red flags
               </label>
               <div className="flex gap-1">
-                <div className="mt-1 rounded-md bg-red-200 px-2 py-1 text-xs">
-                  Alta rotación laboral
-                </div>
-                <div className="mt-1 rounded-md bg-red-200 px-2 py-1 text-xs">
-                  Alta rotación laboral
-                </div>
+                {userInfo.red_flags.map((flag, index) => (
+                  <div
+                    key={index}
+                    className="mt-1 rounded-md bg-red-200 px-2 py-1 text-xs"
+                  >
+                    {flag}
+                  </div>
+                ))}
               </div>
-            </div>
-
-            <div className="mt-3 flex justify-end gap-2">
-              <button
-                className="rounded-md bg-black px-4 py-2 text-sm text-white"
-                onClick={() => setIsOpen(false)}
-              >
-                Accept
-              </button>
             </div>
           </Dialog.Panel>
         </div>
@@ -60,7 +75,7 @@ export default function Candidate(props) {
 
       <div className="my-4 flex w-full items-center justify-between rounded border border-black p-4">
         <button>{props.name}</button>
-        <button onClick={() => setIsOpen(true)}>
+        <button onClick={() => fetchUserInfo()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
