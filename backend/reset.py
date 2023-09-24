@@ -4,14 +4,14 @@ conn = sqlite3.connect('FridaCV.db')
 cursor = conn.cursor()
 
 # DROP TABLES
-cursor.execute('DROP TABLE ConfirmedCandidates')
-cursor.execute('DROP TABLE CompanyPosition')
-cursor.execute('DROP TABLE Company')
-cursor.execute('DROP TABLE Redflags')
-cursor.execute('DROP TABLE Softskills')
-cursor.execute('DROP TABLE Hardskills')
-cursor.execute('DROP TABLE URL')
-cursor.execute('DROP TABLE Candidate')
+cursor.execute('DROP TABLE IF EXISTS ConfirmedCandidates')
+cursor.execute('DROP TABLE IF EXISTS CompanyPosition')
+cursor.execute('DROP TABLE IF EXISTS Company')
+cursor.execute('DROP TABLE IF EXISTS Redflags')
+cursor.execute('DROP TABLE IF EXISTS Softskills')
+cursor.execute('DROP TABLE IF EXISTS Hardskills')
+cursor.execute('DROP TABLE IF EXISTS URL')
+cursor.execute('DROP TABLE IF EXISTS Candidate')
 
 # Tablas del procesamiento de CVs por la IA
 cursor.execute('CREATE TABLE IF NOT EXISTS Candidate (id_candidate INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), email VARCHAR(50), cv_route VARCHAR(50), ranking_points INTEGER, filtered_points INTEGER)')
