@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function UploadCVPage() {
@@ -18,7 +18,9 @@ export default function UploadCVPage() {
       <Navbar />
       <h2 className="py-20 text-center text-6xl font-bold">Upload your CV</h2>
       <form
-        action="#"
+        action="http://127.0.0.1:4000/api/users"
+        method="POST"
+        encType="multipart/form-data"
         className="mx-auto max-w-md rounded-md border border-slate-400 p-4"
       >
         <p className="text-slate-400">Welcome</p>
@@ -36,13 +38,13 @@ export default function UploadCVPage() {
         <div className="mt-4 flex items-center justify-center">
           <input
             type="file"
-            id="cv"
-            name="cv"
+            id="resume"
+            name="resume"
             className="absolute left-0 top-0 cursor-pointer opacity-0"
             onChange={handleFileChange}
           />
           <label
-            htmlFor="cv"
+            htmlFor="resume"
             className="flex cursor-pointer items-center rounded-md border border-black bg-white px-4 py-2 text-black"
           >
             <div className="mr-2">

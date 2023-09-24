@@ -13,7 +13,7 @@ export default function App() {
         <Route index element={<RegisterCompanyPage />} />
         <Route path="/upload-cv" element={<UploadCVPage />} />
         <Route path="/upload-cv/success" element={<UploadedCVPage />} />
-        <Route path="/jop-postings" element={<JobPostingsPage />} />
+        <Route path="/job-postings" element={<JobPostingsPage />} />
         <Route path="/search-candidates" element={<SearchCandidatesPage />} />
       </Routes>
     </BrowserRouter>

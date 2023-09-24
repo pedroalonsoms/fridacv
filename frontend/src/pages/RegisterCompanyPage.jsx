@@ -1,12 +1,48 @@
 import Navbar from "../components/Navbar";
+import { useState } from "react";
 
 export default function RegisterCompanyPage() {
+  const [formData, setFormData] = useState({
+    companyName: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Enviar los datos al servidor
+    try {
+      const response = await fetch("/api/crearRegistro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      console.log(formData);
+
+      if (response.status === 201) {
+        console.log("Registro creado con éxito");
+      } else {
+        console.error("Error al enviar datos");
+      }
+    } catch (error) {
+      console.error("Error al enviar datos:", error);
+    }
+  };
   return (
     <>
       <Navbar />
       <h1 className="pt-20 text-center text-6xl font-bold">Register Company</h1>
       <div className="pt-20"></div>
       <form
+        onSubmit={handleSubmit}
         action="#"
         className="mx-auto max-w-md rounded-md border border-slate-400 p-4"
       >
@@ -21,6 +57,8 @@ export default function RegisterCompanyPage() {
             type="text"
             id="companyName"
             name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
           ></input>
         </div>
 
@@ -33,6 +71,8 @@ export default function RegisterCompanyPage() {
             id="email"
             name="email"
             className="w-full rounded-md border border-slate-400 p-2"
+            value={formData.email}
+            onChange={handleChange}
           ></input>
         </div>
 
@@ -45,6 +85,8 @@ export default function RegisterCompanyPage() {
             id="password"
             name="password"
             className="w-full rounded-md border border-slate-400 p-2"
+            value={formData.password}
+            onChange={handleChange}
           ></input>
         </div>
 
@@ -52,7 +94,7 @@ export default function RegisterCompanyPage() {
           type="submit"
           className="mx-auto mt-4 block rounded-md bg-black px-16 py-2 text-lg text-white"
         >
-          Save changes
+          Log In
         </button>
       </form>
     </>
