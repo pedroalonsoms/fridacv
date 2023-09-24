@@ -2,12 +2,14 @@ import Navbar from "../components/Navbar";
 import JobPost from "../components/JobPost";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
+import { useCompany } from "../components/CompanyContext";
 
 export default function JobPostingsPage() {
   let [isOpen, setIsOpen] = useState(true);
+  const { companyId } = useCompany();
 
   const [formData, setFormData] = useState({
-    id_company: "",
+    id_company: companyId,
     position_name: "",
     position_description: "",
   });
@@ -30,10 +32,10 @@ export default function JobPostingsPage() {
         },
         body: JSON.stringify(formData),
       });
-      // console.log(companyId);
       console.log(formData);
       console.log(response);
 
+      console.log(companyId);
       if (response.status === 200) {
         console.log("Registro creado con éxito");
         setIsOpen(false); // Cerrar el diálogo después del envío exitoso
