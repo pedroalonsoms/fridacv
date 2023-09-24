@@ -55,9 +55,9 @@ export default function RegisterCompanyPage() {
           <input
             className="w-full rounded-md border border-slate-400 p-2"
             type="text"
-            id="companyName"
-            name="companyName"
-            value={formData.companyName}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
           ></input>
         </div>

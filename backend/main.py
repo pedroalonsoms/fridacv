@@ -31,7 +31,42 @@ def create_company():
     connection.close()
     return company
 
-@app.route("/users/", methods=["GET"])
+@app.route("/api/jobs", methods=["POST"])
+def create_job():
+    json_data = request.json
+    id_company = json_data["id_company"]
+    position_name = json_data["position_name"]
+    position_description = json_data["position_description"]
+
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO CompanyPosition (id_company, position_name, position_description) VALUES (?, ?, ?)', (id_company, position_name, position_description))
+    connection.commit()
+
+    cursor.execute('SELECT * FROM CompanyPosition')
+    company_positions = cursor.fetchall()
+    connection.close()
+    return company_positions
+
+@app.route("/api/jobs", methods=["PUT"])
+def update_job():
+    json_data = request.json
+    # id_company, position_name, position_description
+    id_company = json_data["id_company"]
+    position_name = json_data["position_name"]
+    position_description = json_data["position_description"]
+
+    connection = sqlite3.connect('FridaCV.db')
+    cursor = connection.cursor()
+    cursor.execute('UPDATE CompanyPosition SET position_name=?, position_description=? WHERE id_company=?', (position_name, position_description, id_company))
+    connection.commit()
+
+    cursor.execute('SELECT * FROM CompanyPosition WHERE id_company=?', (id_company))
+    updated_position = cursor.fetchall()
+    connection.close()
+    return updated_position
+
+@app.route("/users/", methods=["get"])
 def get_all_user():
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
