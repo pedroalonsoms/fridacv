@@ -15,13 +15,13 @@ source env/bin/activate
 Install dependencies
 
 ```console
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Save dependencies
 
 ```console
-pip freeze > requirements.txt
+pip3 freeze > requirements.txt
 ```
 
 Run the project
