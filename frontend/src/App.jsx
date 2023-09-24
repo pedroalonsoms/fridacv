@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import UploadCVPage from "./pages/UploadCVPage";
 import UploadedCVPage from "./pages/UploadedCVPage";
 import JobPostingsPage from "./pages/JobPostingsPage";
+import SearchCandidatesPage from "./pages/SearchCandidatesPage";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
       <Navbar />
       <RegisterCompanyPage />
       <JobPostingsPage />
+      <SearchCandidatesPage />
       <hr></hr>
       <UploadCVPage />
       <UploadedCVPage />

@@ -8,11 +8,11 @@ export default function JobPostingsPage() {
         </button>
       </div>
       <div className="mx-auto max-w-2xl">
-        <div className="my-2 flex w-full items-center justify-between rounded border border-black p-4">
+        <div className="my-4 flex w-full items-center justify-between rounded border border-black p-4">
           <button>Job Title</button>
           <button>Delete</button>
         </div>
-        <div className="my-2 flex w-full items-center justify-between rounded border border-black p-4">
+        <div className="my-4 flex w-full items-center justify-between rounded border border-black p-4">
           <button>Job Title</button>
           <button>Delete</button>
         </div>
