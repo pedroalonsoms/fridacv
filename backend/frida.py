@@ -1,10 +1,11 @@
 import os
+import ast
 from softtek_llm.chatbot import Chatbot
 from softtek_llm.models import OpenAI
 from dotenv import load_dotenv
-from pdf_reader import getPDFText
+from pdf_reader import get_pdf_text
 
-def get_user_info(url):
+def get_info_user(text):
     load_dotenv()
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     if OPENAI_API_KEY is None:
@@ -35,7 +36,7 @@ def get_user_info(url):
 
     ## PROMPT
 
-    text = getPDFText(url)
+    # text = getPDFText(url)
 
     # text = """José Eduardo de Valle Lara
     # SoftwareEngineer
@@ -88,36 +89,58 @@ def get_user_info(url):
     response = chatbot.chat(
         "The following text represents a resume of an applicant, just return a read confirmation text. This is the resume: " + text
     )
-    res_1 = response.message.content
+    confirmation = response.message.content
 
 
     response = chatbot.chat(
-        "Return a python style list of personal information of the applicant, strictly and only with the format: [Full name, residence, telephone, email, other contact links...]"
+        "Return a python style list of personal information of the applicant, strictly and only with the format: [Full name, residence, telephone, email, other contact links...]. Do not return a message, strictly only return the array"
     )
-    res_2 = response.message.content
+    personal_info = response.message.content
 
     response = chatbot.chat(
-        "Return a python style list with all the soft skills, and without any technical skill found in the text given, strictly and only with the format: [skill 1, skill 2, skill 3, ...]"
+        "Return a python style list with all the soft skills, and without any technical skill found in the text given, strictly and only with the format: [skill 1, skill 2, skill 3, ...]. Do not return a message, strictly only return the array"
     )
-    res_3 = response.message.content
+    soft_skills = response.message.content
 
     response = chatbot.chat(
-        "Return a python style list with all the technical skills found in the text given, strictly and only with the format: [skill 1, skill 2, skill 3, ...]"
+        "Return a python style list with all the technical skills found in the text given, strictly and only with the format: [skill 1, skill 2, skill 3, ...]. Do not return a message, strictly only return the array"
     )
-    res_4 = response.message.content
+    technical_skills = response.message.content
+
+    # response = chatbot.chat(
+    #     "Return a python style list with all the main projects found in the text given, strictly and only with the format: [[title 1, description], [title 2, description], [title 3, description], ...]. Do not return a message, strictly only return the array"
+    # )
+    # res_5 = response.message.content
 
     response = chatbot.chat(
-        "Return a python style list with all the main projects found in the text given, strictly and only with the format: [[title 1, description], [title 2, description], [title 3, description], ...]"
+        "Return the time periods, including month and year, when the main projects where done. If not specified return an empty python array. Do not return a message, strictly only return the array"
     )
-    res_5 = response.message.content
+    periods = response.message.content
 
     response = chatbot.chat(
-        "Return all the periods the "
+        "Calculate and return just number the months passed in every time period in the next list: " +  periods + ". Do not return a message, strictly only return the array"
     )
-    res_6 = response.message.content
+    number_time_periods = response.message.content
 
 
 
     print("\n\n============================= AI RESPONSE =============================\n\n")
-    print(res_1  + "\n\n" + res_2 + "\n\n" + res_3 + "\n\n" + res_4 + "\n\n" + res_5 + "\n\n" + res_6)
+    print(confirmation  + "\n\n" + personal_info + "\n\n" + soft_skills + "\n\n" + technical_skills + "\n\n" + number_time_periods)
     # print(type(response))
+
+    print("\n\n============================= Parsed DATA =============================\n\n")
+
+    # Convert the string to a Python list
+    personal_info_arr = ast.literal_eval(personal_info)
+    soft_skills_arr = ast.literal_eval(soft_skills)
+    technical_skills_arr = ast.literal_eval(technical_skills)
+    number_time_periods_arr = ast.literal_eval(number_time_periods)
+
+    print(personal_info_arr) 
+    print(soft_skills_arr) 
+    print(technical_skills_arr) 
+    print(number_time_periods_arr)
+
+
+
+    

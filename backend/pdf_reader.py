@@ -3,14 +3,9 @@ import requests
 from pypdf import PdfReader
 import PyPDF2
 
-url = 'http://www.arkansasrazorbacks.com/wp-content/uploads/2017/02/Miami-Ohio-Game-2.pdf'
-
-def getPDFText(url):
-    r = requests.get(url)
-    # print(r.content)
-    f = io.BytesIO(r.content)
-
-    pdf_reader = PyPDF2.PdfReader(f)
+def get_pdf_text(path):
+    pdf_file = open('./uploads/c1c07d58-406a-4832-9fbd-3a31e79aa9ac.pdf', 'rb')
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
 
     text = ""
     for page_num in range(len(pdf_reader.pages)):

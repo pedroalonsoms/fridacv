@@ -3,7 +3,7 @@ import ast
 from softtek_llm.chatbot import Chatbot
 from softtek_llm.models import OpenAI
 from dotenv import load_dotenv
-from pdf_reader import getPDFText
+from pdf_reader import get_pdf_text
 
 def get_info_user():
     load_dotenv()

@@ -4,7 +4,8 @@ from flask import Flask
 from flask import request
 import sqlite3
 
-from frida_test import get_info_user
+from pdf_reader import get_pdf_text
+from frida import get_info_user
 
 app = Flask(__name__)
 
@@ -30,7 +31,7 @@ def create_company():
     connection.close()
     return company
 
-@app.route("/users/", methods=["get"])
+@app.route("/users/", methods=["GET"])
 def get_all_user():
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
@@ -41,12 +42,16 @@ def get_all_user():
 
 @app.route("/api/users", methods=["POST"])
 def create_user():
-    email = request.form["email"]
-    resume_file = request.files["resume"]
+    resume_file = request.files["resume_file"]
     hashed_filename = str(uuid.uuid4()) + ".pdf"
     resume_file.save(os.path.join("./uploads", hashed_filename))
-    print(email)
+    print(hashed_filename)
     print(resume_file.filename)
+    complete_path = "./uploads/" + hashed_filename
+    file_string = get_pdf_text(complete_path)
+    # print(file_string)
+    get_info_user(file_string)
+    
     return ""
 
 # @app.route("/upload_user", methods=["POST"])
