@@ -32,7 +32,7 @@ def get_all_user():
 
 @app.route("/api/users", methods=["POST"])
 def create_user():
-    resume_file = request.files["resume_file"]
+    resume_file = request.files["resume"]
     hashed_filename = str(uuid.uuid4()) + ".pdf"
     resume_file.save(os.path.join("./uploads", hashed_filename))
     complete_path = "./uploads/" + hashed_filename
