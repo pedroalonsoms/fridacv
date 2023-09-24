@@ -21,16 +21,6 @@ export default function UploadCVPage() {
           />
         </div>
 
-        <div className="mt-2">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            className="w-full rounded-md border border-slate-400 p-2"
-          />
-        </div>
-
         <div className="mt-4 flex items-center justify-center">
           <input
             type="file"
