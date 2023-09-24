@@ -1,10 +1,11 @@
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import { useCompany } from "../components/CompanyContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterCompanyPage() {
-  const { idCompany, setIdCompany } = useCompany();
+  const { setIdCompany } = useCompany();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -38,6 +39,7 @@ export default function RegisterCompanyPage() {
         console.log("Registro creado con éxito");
         const responseDataString = responseData[0][0].toString();
         setIdCompany(responseDataString);
+        navigate("/job-postings");
       } else {
         console.error(
           "Error al enviar datos. Código de estado:",
@@ -102,14 +104,12 @@ export default function RegisterCompanyPage() {
           ></input>
         </div>
 
-        {/* <Link to={`/job-postings`}> */}
         <button
           type="submit"
           className="mx-auto mt-4 block rounded-md bg-black px-16 py-2 text-lg text-white"
         >
           Log In
         </button>
-        {/*</Link>*/}
       </form>
     </>
   );

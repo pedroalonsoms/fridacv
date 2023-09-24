@@ -1,6 +1,7 @@
+import json
 import os
 import uuid
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
 import sqlite3
@@ -227,10 +228,19 @@ def get_all_jobs():
     connection.close()
     return companies
 
-@app.route("/api/jobs", methods=["POST"])
-def create_job():
+@app.route("/api/jobs/companies/<id_company>", methods=["get"])
+def get_jobs_from_company(id_company):
+    connection = sqlite3.connect('FridaCV.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM CompanyPosition WHERE id_company = ?', (id_company))
+    companies = cursor.fetchall()
+    connection.close()
+    return json.dumps( [dict(ix) for ix in companies] )
+
+@app.route("/api/jobs/companies/<id_company>", methods=["POST"])
+def create_job(id_company):
     json_data = request.json
-    id_company = json_data["id_company"]
     position_name = json_data["position_name"]
     position_description = json_data["position_description"]
 
@@ -264,16 +274,13 @@ def update_job():
     connection.close()
     return updated_position
 
-@app.route("/api/jobs", methods=["DELETE"])
-def delete_job():
-    json_data = request.json
-    id_company = json_data["id_company"]
-
+@app.route("/api/jobs/<id_company_position>", methods=["DELETE"])
+def delete_job(id_company_position):
     connection = sqlite3.connect('FridaCV.db')
     cursor = connection.cursor()
-    cursor.execute('DELETE FROM CompanyPosition WHERE id_company=?;', (id_company))
+    cursor.execute('DELETE FROM CompanyPosition WHERE id_company_position=?;', (id_company_position))
     connection.commit()
-
+    return {}
 
 # URLS
 @app.route("/urls/", methods=["get"])
@@ -315,3 +322,4 @@ def get_all_red_flags():
 
 if __name__ == "__main__":
     app.run(debug=False, port=4000)
+

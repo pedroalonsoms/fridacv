@@ -22,7 +22,7 @@ cursor.execute('CREATE TABLE IF NOT EXISTS Redflags (id_candidate INTEGER, descr
 
 # Tablas de la informacion del sitio web de job hunting
 cursor.execute('CREATE TABLE IF NOT EXISTS Company (id_company INTEGER PRIMARY KEY AUTOINCREMENT, company_name VARCHAR(50), email VARCHAR(50), password VARCHAR(50))')
-cursor.execute('CREATE TABLE IF NOT EXISTS CompanyPosition (id_company INTEGER, position_name VARCHAR(50), position_description VARCHAR(500), FOREIGN KEY (id_company) REFERENCES Company(id_company))')
+cursor.execute('CREATE TABLE IF NOT EXISTS CompanyPosition (id_company_position INTEGER PRIMARY KEY AUTOINCREMENT, id_company INTEGER, position_name VARCHAR(50), position_description VARCHAR(500), FOREIGN KEY (id_company) REFERENCES Company(id_company))')
 cursor.execute('CREATE TABLE IF NOT EXISTS ConfirmedCandidates (id_company INTEGER, id_candidate INTEGER, FOREIGN KEY (id_company) REFERENCES Company(id_company), FOREIGN KEY (id_candidate) REFERENCES Candidate(id_candidate))')
 
 conn.commit() # confirmando cambios en la BD

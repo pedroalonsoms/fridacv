@@ -2,7 +2,7 @@ export default function JobPost(props) {
   return (
     <div className="my-4 flex w-full items-center justify-between rounded border border-black p-4">
       <button>{props.title}</button>
-      <button>
+      <button onClick={props.onDeleteClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
