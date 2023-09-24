@@ -3,7 +3,7 @@
 Create a virtual environment
 
 ```console
-python3 -m venv env
+python3.10 -m venv env
 ```
 
 Activate it
