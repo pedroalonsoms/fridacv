@@ -1,19 +1,51 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Candidate from "../components/Candidate";
 import Select from "react-select";
 import { Dialog } from "@headlessui/react";
-import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function SearchCandidatesPage() {
+  const [softSkills, setSoftSkills] = useState([]);
+  const [hardSkills, setHardSkills] = useState([]);
+
+  useEffect(() => {
+    const fetchSkills = async (url, setter) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(
+            `No se pudo obtener la lista de ${
+              setter === setSoftSkills ? "soft" : "hard"
+            } skills.`,
+          );
+        }
+        const data = await response.json();
+        setter(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSkills("http://localhost:4000/soft_skills/", setSoftSkills);
+    fetchSkills("http://localhost:4000/hard_skills/", setHardSkills);
+  }, []);
+
   let [isOpen, setIsOpen] = useState(true);
 
   const [keywords, setKeywords] = useState([]);
-  const options = [
-    { value: "felipe", label: "Felipe" },
-    { value: "julio", label: "Julio" },
-    { value: "pedro", label: "Pedro" },
+
+  const skillOptions = [
+    ...softSkills.map((softSkill) => ({
+      value: softSkill[1],
+      label: softSkill[1],
+    })),
+    ...hardSkills.map((hardSkill) => ({
+      value: hardSkill[1],
+      label: hardSkill[1],
+    })),
   ];
+
   const handleSearch = (e) => {
     e.preventDefault();
     console.log(keywords);
@@ -59,13 +91,13 @@ export default function SearchCandidatesPage() {
 
       <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl gap-2">
         <Select
-          name="colors"
+          name="skills"
           isMulti
           className="grow"
           value={keywords}
-          options={options}
-          onChange={(newKeywords) => {
-            setKeywords(() => newKeywords);
+          options={skillOptions}
+          onChange={(selectedOptions) => {
+            setKeywords(selectedOptions || []);
           }}
         />
 
