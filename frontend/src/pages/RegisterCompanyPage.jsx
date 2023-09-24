@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function RegisterCompanyPage() {
   const [formData, setFormData] = useState({
-    companyName: "",
+    name: "",
     email: "",
     password: "",
   });
@@ -18,7 +18,7 @@ export default function RegisterCompanyPage() {
 
     // Enviar los datos al servidor
     try {
-      const response = await fetch("/api/crearRegistro", {
+      const response = await fetch("/api/companies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
