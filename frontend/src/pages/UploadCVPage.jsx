@@ -1,6 +1,18 @@
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function UploadCVPage() {
+  const [uploadedFileName, setUploadedFileName] = useState("");
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setUploadedFileName(file.name);
+    } else {
+      setUploadedFileName("");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -27,6 +39,7 @@ export default function UploadCVPage() {
             id="cv"
             name="cv"
             className="absolute left-0 top-0 cursor-pointer opacity-0"
+            onChange={handleFileChange}
           />
           <label
             htmlFor="cv"
@@ -51,6 +64,10 @@ export default function UploadCVPage() {
             Choose File
           </label>
         </div>
+
+        {uploadedFileName && (
+          <div className="mt-4 text-center text-black">{`File chosen: ${uploadedFileName}`}</div>
+        )}
 
         <div className="mt-4 flex items-center justify-center">
           <button
