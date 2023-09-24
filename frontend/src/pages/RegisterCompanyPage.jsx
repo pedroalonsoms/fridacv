@@ -4,8 +4,7 @@ import { useCompany } from "../components/CompanyContext";
 import { Link } from "react-router-dom";
 
 export default function RegisterCompanyPage() {
-  const [id_company, setId_company] = useState("");
-  const { setIdCompany } = useCompany();
+  const { idCompany, setIdCompany } = useCompany();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,10 +36,8 @@ export default function RegisterCompanyPage() {
         const responseData = await response.json();
         console.log("Respuesta del servidor:", responseData);
         console.log("Registro creado con éxito");
-        const responseDataString = JSON.stringify(responseData[0][0]);
-        setId_company(responseDataString);
-        console.log(id_company);
-        setIdCompany(id_company);
+        const responseDataString = responseData[0][0].toString();
+        setIdCompany(responseDataString);
       } else {
         console.error(
           "Error al enviar datos. Código de estado:",
@@ -105,14 +102,14 @@ export default function RegisterCompanyPage() {
           ></input>
         </div>
 
-        <Link to={`/job-postings`}>
-          <button
-            type="submit"
-            className="mx-auto mt-4 block rounded-md bg-black px-16 py-2 text-lg text-white"
-          >
-            Log In
-          </button>
-        </Link>
+        {/* <Link to={`/job-postings`}> */}
+        <button
+          type="submit"
+          className="mx-auto mt-4 block rounded-md bg-black px-16 py-2 text-lg text-white"
+        >
+          Log In
+        </button>
+        {/*</Link>*/}
       </form>
     </>
   );

@@ -1,13 +1,13 @@
 // CompanyContext.js
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext } from "react";
 
 const CompanyContext = createContext();
 
 export function CompanyProvider({ children }) {
-  const [id_company, setIdCompany] = useState("");
+  const [idCompany, setIdCompany] = useState("");
 
   return (
-    <CompanyContext.Provider value={{ id_company, setIdCompany }}>
+    <CompanyContext.Provider value={{ idCompany, setIdCompany }}>
       {children}
     </CompanyContext.Provider>
   );
