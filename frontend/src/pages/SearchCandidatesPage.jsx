@@ -1,8 +1,10 @@
+import Navbar from "../components/Navbar";
 import Candidate from "../components/Candidate";
 
 export default function SearchCandidatesPage() {
   return (
     <>
+      <Navbar />
       <h2 className="py-20 text-center text-6xl font-bold">
         Search Candidates
       </h2>

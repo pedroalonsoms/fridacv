@@ -1,6 +1,9 @@
+import Navbar from "../components/Navbar";
+
 export default function UploadCVPage() {
   return (
     <>
+      <Navbar />
       <h2 className="py-20 text-center text-6xl font-bold">Upload your CV</h2>
       <form
         action="#"

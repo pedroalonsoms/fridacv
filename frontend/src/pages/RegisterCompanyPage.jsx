@@ -1,6 +1,9 @@
+import Navbar from "../components/Navbar";
+
 export default function RegisterCompanyPage() {
   return (
     <>
+      <Navbar />
       <h1 className="pt-20 text-center text-6xl font-bold">Register Company</h1>
       <div className="pt-20"></div>
       <form
