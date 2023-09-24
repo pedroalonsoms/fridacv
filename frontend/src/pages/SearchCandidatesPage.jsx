@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Candidate from "../components/Candidate";
 import Select from "react-select";
@@ -33,46 +33,53 @@ export default function SearchCandidatesPage() {
 
   let [isOpen, setIsOpen] = useState(true);
 
-  const [keywords, setKeywords] = useState([]);
+  const [softSkillsKeywords, setSoftSkillsKeywords] = useState([]);
+  const [hardSkillsKeywords, setHardSkillsKeywords] = useState([]);
 
-  const skillOptions = [
-    ...softSkills.map((softSkill) => ({
-      value: softSkill[1],
-      label: softSkill[1],
-    })),
-    ...hardSkills.map((hardSkill) => ({
-      value: hardSkill[1],
-      label: hardSkill[1],
-    })),
-  ];
+  const softSkillsOptions = softSkills.map((softSkill) => ({
+    value: softSkill[0],
+    label: softSkill[1],
+  }));
+  const hardSkillsOptions = hardSkills.map((hardSkill) => ({
+    value: hardSkill[0],
+    label: hardSkill[1],
+  }));
 
-  const handleSearch = (e) => {
+  const handleSoftSkillsSearch = (e) => {
     e.preventDefault();
-    console.log(keywords);
+    console.log("Soft Skills Keywords:", softSkillsKeywords);
+  };
+
+  const handleHardSkillsSearch = (e) => {
+    e.preventDefault();
+    console.log("Hard Skills Keywords:", hardSkillsKeywords);
   };
 
   return (
     <>
       <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-        {/* The backdrop, rendered as a fixed sibling to the panel container */}
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+          {/* The backdrop, rendered as a fixed sibling to the panel container */}
+          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-        {/* Full-screen container to center the panel */}
-        <div className="fixed inset-0 grid place-items-center ">
-          {/* The actual dialog panel  */}
-          <Dialog.Panel className="flex w-full max-w-md flex-col items-center rounded-md bg-white p-6">
-            <Dialog.Title className="text-lg font-semibold">
-              Your QR Code
-            </Dialog.Title>
-            <QRCodeSVG value="https://reactjs.org/" className="m-4" />
-            <button
-              className="rounded-md border border-slate-400 bg-white px-4 py-2 text-black"
-              onClick={() => setIsOpen(false)}
-            >
-              Close
-            </button>
-          </Dialog.Panel>
-        </div>
+          {/* Full-screen container to center the panel */}
+          <div className="fixed inset-0 grid place-items-center ">
+            {/* The actual dialog panel  */}
+            <Dialog.Panel className="flex w-full max-w-md flex-col items-center rounded-md bg-white p-6">
+              <Dialog.Title className="text-lg font-semibold">
+                Your QR Code
+              </Dialog.Title>
+              <QRCodeSVG value="https://reactjs.org/" className="m-4" />
+              <button
+                className="rounded-md border border-slate-400 bg-white px-4 py-2 text-black"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </button>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+        ;
       </Dialog>
 
       <Navbar />
@@ -89,15 +96,17 @@ export default function SearchCandidatesPage() {
         </button>
       </div>
 
-      <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl gap-2">
+      <form
+        onSubmit={handleSoftSkillsSearch}
+        className="mx-auto max-w-2xl grow"
+      >
         <Select
-          name="skills"
+          name="softSkills"
           isMulti
-          className="grow"
-          value={keywords}
-          options={skillOptions}
+          value={softSkillsKeywords}
+          options={softSkillsOptions}
           onChange={(selectedOptions) => {
-            setKeywords(selectedOptions || []);
+            setSoftSkillsKeywords(selectedOptions || []);
           }}
         />
 
@@ -105,13 +114,31 @@ export default function SearchCandidatesPage() {
           type="submit"
           className="rounded-md bg-black px-4 py-2 text-white"
         >
-          Continue
+          Search Soft Skills
+        </button>
+      </form>
+
+      <form onSubmit={handleHardSkillsSearch} className=" mx-auto max-w-2xl">
+        <Select
+          name="hardSkills"
+          isMulti
+          value={hardSkillsKeywords}
+          options={hardSkillsOptions}
+          onChange={(selectedOptions) => {
+            setHardSkillsKeywords(selectedOptions || []);
+          }}
+        />
+
+        <button
+          type="submit"
+          className="rounded-md bg-black px-4 py-2 text-white"
+        >
+          Search Hard Skills
         </button>
       </form>
 
       <div className="mx-auto max-w-2xl">
-        <Candidate name="hello" />
-        <Candidate name="world" />
+        {/* Aquí puedes mapear y mostrar los candidatos */}
       </div>
     </>
   );
